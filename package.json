@@ -1,0 +1,9 @@
+{
+  "name": "cozy-cafe-little-moments",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-production.mjs",
+    "check": "node --check dist/game.js && node --check dist/prep.js && npm run build && node --check build/game.js"
+  }
+}
