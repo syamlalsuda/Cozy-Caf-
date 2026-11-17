@@ -1,8 +1,14 @@
-import {cp, mkdir, readFile, writeFile} from 'node:fs/promises';
+import {cp, mkdir, readFile, writeFile, readdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const out=path.join(root,'build');
+// Reject incomplete artwork before publishing it.
+for (const name of await readdir(path.join(root,'dist/assets'))) {
+ if (!name.endsWith('.webp')) continue;
+ const bytes=await readFile(path.join(root,'dist/assets',name));
+ if(bytes.toString('ascii',0,4)!=='RIFF'||bytes.toString('ascii',8,12)!=='WEBP'||bytes.readUInt32LE(4)+8!==bytes.length)throw new Error('Invalid or truncated image: '+name);
+}
 await mkdir(out,{recursive:true});
 await cp(path.join(root,'dist'),out,{recursive:true});
 let code=await readFile(path.join(out,'game.js'),'utf8');

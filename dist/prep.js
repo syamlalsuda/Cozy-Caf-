@@ -13,7 +13,7 @@ function objectArt(item,fill){
  if(tiles[item]){const [x,y]=tiles[item];return `<span class="food-sprite food-${item.toLowerCase()}" style="--sx:${x*50}%;--sy:${y*100}%" aria-hidden="true"></span>`;}
 
  const asset=item==='Salt'?'salt':/Coffee powder|Instant coffee|Ground coffee/.test(item)?'coffee':item==='Cup'?'cup':/milk/i.test(item)?'milk':/water|Espresso|Pour coffee/.test(item)?'kettle':item==='Sugar'?'sugar':/Tea|infuser/.test(item)?'infuser':item==='Stir'?'spoon':null;
- if(asset)return `<span class="photo-object photo-${asset} ${item==='Green tea infuser'?'green-leaves':''}"><img src="assets/real-${asset}.png" alt="" draggable="false">${asset==='cup'&&fill?`<i class="real-liquid" style="--tea-color:${fill}"></i>`:''}</span>`;
+ if(asset)return `<span class="photo-object photo-${asset} ${item==='Green tea infuser'?'green-leaves':''}"><img src="assets/real-${asset}.webp" alt="" draggable="false">${asset==='cup'&&fill?`<i class="real-liquid" style="--tea-color:${fill}"></i>`:''}</span>`;
 
  const uid="material-"+(artSequence++);
  let shape='';
