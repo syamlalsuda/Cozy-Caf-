@@ -111,3 +111,81 @@
 .lobster-topping{position:absolute;inset:32%;z-index:5;display:block}.chocolate-batter{position:absolute;inset:29%;border-radius:50%;background:radial-gradient(ellipse at 35% 30%,#795137,#32160c 75%);box-shadow:inset 2px 4px 12px #180b06;z-index:5}
 /* Mask atlas cell backgrounds to the round gold-rimmed dishes. */
 .food-sprite.luxury-dish{clip-path:circle(46% at 50% 50%)}
+
+/* Compact screens: readable controls, scrollable content, and generous tap targets. */
+html{scroll-padding-top:16px}button,input{max-width:100%}
+@media(max-width:1024px){
+ .game-hud{gap:12px;flex-wrap:wrap;height:auto;min-height:82px}
+ .game-hud .level-hud{min-width:130px;flex:1}
+ .game-hud .stats{gap:14px}.game-hud>button{white-space:nowrap}
+ .challenge-screen .prep-header>div:nth-child(2){min-width:0;flex:1}
+ .challenge-screen .prep-header b{overflow-wrap:anywhere;line-height:1.3}
+}
+@media(max-width:700px){
+ body{overflow-x:hidden}button{min-height:44px}input[type=text]{font-size:16px}
+ .outside-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:16px}
+ .outside-top .outside-brand{font-size:25px}.outside-top .outside-level{grid-column:1/-1;justify-self:start;max-width:100%;font-size:10px}
+ .outside-top [data-action="music-toggle"]{padding:10px 12px;font-size:12px}
+ .outside-welcome{position:relative;left:auto;right:auto;bottom:auto;width:100%;max-width:none;margin-top:clamp(100px,24svh,240px);padding:24px 20px calc(24px + env(safe-area-inset-bottom));background:linear-gradient(transparent,#132d29d9 25%)}
+ .outside-welcome h1{font-size:clamp(30px,8vw,40px);line-height:1.12}.outside-welcome p{font-size:13px}
+ .outside-welcome .welcome-name{max-width:360px}.outside-welcome small{font-size:11px;line-height:1.6}
+ .outside-welcome button.primary{min-width:0;width:min(360px,100%)}
+ .immersive-game{padding:12px 12px calc(16px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:visible}
+ .game-hud{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px 8px;padding:10px 0;width:100%;min-width:0}
+ .game-hud .brand{font-size:23px}.game-hud .level-hud{grid-column:1/-1;grid-row:2;min-width:0;width:100%;order:initial}
+ .game-hud .stats{grid-column:1/-1;grid-row:3;justify-content:space-between;margin:0;gap:12px}
+ .game-hud .stats .rep{display:block}.game-hud .stats b{font-size:17px}.game-hud .eyebrow{font-size:9px}
+ .game-hud>button{font-size:11px;padding:8px;min-height:44px}
+ .game-nav{display:flex;flex-wrap:wrap;width:100%;gap:8px 18px;margin-top:4px}.game-nav button{font-size:12px;min-height:44px}
+ .immersive-game .main-order.glass,.immersive-game .family-card{position:relative;right:auto;bottom:auto;width:100%;max-width:440px;align-self:center;margin:clamp(90px,20svh,180px) 0 18px;padding:22px 18px}
+ .immersive-game .main-order .order-item{min-width:0}.immersive-game .main-order .order-item>div{min-width:0}
+ .immersive-game .main-order .order-item h2{font-size:clamp(27px,8vw,36px);overflow-wrap:anywhere}
+ .main-order .order-item>.order-drink-visual,.order-drink-visual .photo-object{width:64px;height:64px;flex-basis:64px}
+ .immersive-game .main-order .order-time{flex-wrap:wrap;gap:7px}.immersive-game .main-order .eyebrow{letter-spacing:1px}
+ .ambient-label{position:relative;left:auto;bottom:auto;align-self:center;font-size:11px;margin-top:auto;text-align:center}
+ .waiting-card{position:relative;left:auto;bottom:auto;transform:none;align-self:center;margin:24svh 0 24px;width:100%}
+ .overlay{padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain}
+ .modal{padding:20px;max-height:calc(100svh - 24px);width:100%;min-width:0}.modal h2{font-size:30px;overflow-wrap:anywhere}
+ .immersive-game .modal,.prep-screen .modal{background:#122b25f5;border:1px solid #e8d5a655;border-radius:16px;color:#fff5df;text-shadow:none}
+ .modal .panel{background:#ffffff0c;border-color:#ffffff30;color:inherit}.modal small,.modal .muted{color:#d8dfcf}
+ .setting{min-height:54px;align-items:center;padding:12px 0}.setting input{width:22px;height:22px;flex:0 0 22px;accent-color:#cbb17b}
+ .shop-item.row{align-items:flex-start;flex-wrap:wrap}.shop-item p{line-height:1.5}.modal .shop-item button{flex-shrink:0}
+ .prep-screen.challenge-screen{padding:0 12px calc(20px + env(safe-area-inset-bottom));background-attachment:scroll;overflow:visible}
+ .challenge-screen .prep-header{height:auto;min-height:76px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;padding:10px 12px}
+ .challenge-screen .prep-header>div:nth-child(2){font-size:12px;min-width:0}.challenge-screen .prep-header .eyebrow{font-size:8px;letter-spacing:1px}
+ .challenge-screen .prep-header button{min-height:44px;padding:8px;font-size:11px}.challenge-screen .prep-score{font-size:11px;gap:4px}
+ .challenge-screen .challenge-workspace{grid-template-columns:minmax(112px,40%) minmax(0,1fr);gap:10px;margin-top:14px}
+ .ingredient-side,.ingredient-grid,.large-prep-area{min-width:0}.ingredient-grid{gap:12px 4px}
+ .ingredient-grid .prep-tool{min-height:88px;padding:2px;touch-action:pan-y;border-radius:9px}
+ .ingredient-grid .photo-object,.ingredient-grid .prep-tool>svg{width:100%;height:64px;max-width:80px}
+ .ingredient-grid .prep-tool>.food-sprite{max-height:76px}
+ .ingredient-grid .prep-tool>span:last-child{font-size:11px;line-height:1.3;padding:4px 3px;letter-spacing:0;overflow-wrap:anywhere;text-align:center}
+ .recipe-help .recipe-toggle{min-height:44px;width:100%;justify-content:space-between;font-size:12px;padding:9px 7px;gap:5px}
+ .recipe-help small,.ingredient-intro p,.challenge-rules{font-size:11px;line-height:1.5}
+ .ingredient-intro{margin-top:14px}.ingredient-intro .eyebrow{font-size:9px;letter-spacing:1px}
+ .large-prep-area{position:sticky;top:12px;align-self:start;padding-top:0;min-height:0}
+ .challenge-screen .challenge-status{margin-bottom:10px}.challenge-screen .challenge-status .eyebrow{font-size:9px;line-height:1.4;letter-spacing:1px}
+ .challenge-screen .timer-badge{font-size:17px;min-height:44px;white-space:normal;text-align:center}
+ .large-prep-area .top-board{width:100%;height:auto;min-width:0;min-height:0;aspect-ratio:1}
+ .large-prep-area .prep-action{font-size:12px;line-height:1.5;min-height:70px;margin-top:14px;max-width:100%;width:100%}
+ .large-prep-area .prep-action small,.reward-note{font-size:10px;line-height:1.4}
+ .prep-action .primary{min-width:0;white-space:normal;font-size:12px;width:100%;padding:11px 7px}
+ .auto-status{padding:10px;width:100%;min-width:0}.auto-title{gap:4px;flex-wrap:wrap}.auto-title b{font-size:14px}.auto-status small{font-size:10px}
+ .family-prep-queue{gap:6px;flex-wrap:wrap;padding:10px 0}.family-prep-queue>span{width:100%;font-size:10px}.family-prep-queue button{font-size:11px;min-height:44px;padding:8px}
+ .recipe-scrim{padding:12px}.recipe-popover{max-height:calc(100svh - 24px);width:min(370px,100%);padding:18px}.recipe-popover p{font-size:13px}
+ .recipe-popover li{font-size:12px;line-height:1.4}.recipe-popover .primary{min-height:44px}
+ #toast{bottom:calc(12px + env(safe-area-inset-bottom));padding:12px 15px;font-size:13px;line-height:1.4;width:max-content;max-width:calc(100% - 24px)}
+}
+@media(max-width:360px){
+ .game-hud{gap:8px 5px}.game-hud .brand{font-size:20px}.game-hud .brand small{letter-spacing:2px}.game-hud>button{font-size:10px;padding:6px}
+ .challenge-screen .prep-header{grid-template-columns:auto 1fr}.challenge-screen .prep-score{grid-column:1/-1;flex-direction:row;justify-content:space-between}
+ .challenge-screen .challenge-workspace{grid-template-columns:112px minmax(0,1fr);gap:8px}.ingredient-grid{grid-template-columns:1fr 1fr}
+ .ingredient-grid .prep-tool>span:last-child{font-size:10px}.challenge-screen .timer-badge{font-size:15px}
+ .immersive-game .main-order .row{flex-wrap:wrap}.outside-top{gap:10px}
+}
+@media(max-height:500px) and (max-width:1000px){
+ .outside-welcome{position:relative;inset:auto;width:100%;max-width:none;margin-top:40px;padding:20px}.outside-top{padding-top:12px;padding-bottom:12px}
+ .large-prep-area .top-board{width:min(100%,200px)}.challenge-screen .challenge-workspace{margin-top:10px}.large-prep-area{position:relative;top:auto}
+ .immersive-game .main-order.glass,.immersive-game .family-card{position:relative;right:auto;bottom:auto;margin:60px auto 24px;max-width:440px;width:100%}
+ .immersive-game{overflow:visible}.modal,.recipe-popover{max-height:calc(100svh - 20px)}
+}
