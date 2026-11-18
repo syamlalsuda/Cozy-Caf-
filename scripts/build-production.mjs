@@ -23,4 +23,4 @@ code=code.slice(0,start)+code.slice(end);
 code=code.replace("'exterior','reset','levels'","'exterior','reset'");
 if(/data-action="levels"|startReview|levelReviewPanel|review-level|review-order|leave-review|Levels · temporary|Level selection/.test(code))throw new Error('Development level controls remain in production.');
 await writeFile(path.join(out,'game.js'),code);
-console.log('Production build ready: normal XP progression, no temporary level selector.');
+console.log('Production build ready: three unique visits per level, no temporary level selector.');
