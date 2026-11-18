@@ -156,7 +156,7 @@ html{scroll-padding-top:16px}button,input{max-width:100%}
  .challenge-screen .prep-header button{min-height:44px;padding:8px;font-size:11px}.challenge-screen .prep-score{font-size:11px;gap:4px}
  .challenge-screen .challenge-workspace{grid-template-columns:minmax(112px,40%) minmax(0,1fr);gap:10px;margin-top:14px}
  .ingredient-side,.ingredient-grid,.large-prep-area{min-width:0}.ingredient-grid{gap:12px 4px}
- .ingredient-grid .prep-tool{min-height:88px;padding:2px;touch-action:pan-y;border-radius:9px}
+ .ingredient-grid .prep-tool{min-height:88px;padding:2px;touch-action:none;border-radius:9px}
  .ingredient-grid .photo-object,.ingredient-grid .prep-tool>svg{width:100%;height:64px;max-width:80px}
  .ingredient-grid .prep-tool>.food-sprite{max-height:76px}
  .ingredient-grid .prep-tool>span:last-child{font-size:11px;line-height:1.3;padding:4px 3px;letter-spacing:0;overflow-wrap:anywhere;text-align:center}
@@ -215,3 +215,9 @@ html{scroll-padding-top:16px}button,input{max-width:100%}
  .immersive-game .family-items small{font-size:9px;margin-top:2px}
  .family-card>p[data-time]{font-size:16px;margin:8px 0}
 }
+
+/* Ingredient gestures belong to the game; surrounding space remains scrollable. */
+[data-ingredient],[data-ingredient] *{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+[data-ingredient] img{-webkit-user-drag:none;user-drag:none}
+body.ingredient-dragging{overscroll-behavior:none;-webkit-user-select:none;user-select:none}
+body.ingredient-dragging .drag-ghost{touch-action:none}
