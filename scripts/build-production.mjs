@@ -17,7 +17,7 @@ code=code.replace(/<button data-action="levels">.*?<\/button>/g,'');
 code=code.replace("if(modal==='levels')body=levelReviewPanel();",'');
 code=code.replace(/^function levelReviewPanel\(\).*\n/gm,'').replace(/^function startReview\(.*\n/gm,'');
 const start=code.indexOf("if(a==='review-level')");
-const end=code.indexOf("if(a==='next-family')",start);
+const end=code.indexOf("if(a==='music-toggle')",start);
 if(start<0||end<0)throw new Error('Review handler layout changed; inspect production stripping.');
 code=code.slice(0,start)+code.slice(end);
 code=code.replace("'exterior','reset','levels'","'exterior','reset'");

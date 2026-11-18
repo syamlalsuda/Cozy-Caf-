@@ -24,3 +24,5 @@ vm.runInContext(`
 vm.runInContext(`state=fresh();screen='game';modal=null;for(let i=0;i<3;i++){addOrder();state.orders=[];finishVisit();}if(level()!==2)throw Error('Missed visits stalled progression');`,ctx);
 assert.ok(fs.readFileSync('build/index.html','utf8').includes('audio.js'));
 console.log('PASS: 3 distinct visits in all 4 levels, groups, progression, ending, missed visits, audio inclusion');
+
+assert.ok(fs.readFileSync('build/game.js','utf8').includes("if(a==='music-toggle')"),'Music button handler must survive production build');
