@@ -189,3 +189,29 @@ html{scroll-padding-top:16px}button,input{max-width:100%}
  .immersive-game .main-order.glass,.immersive-game .family-card{position:relative;right:auto;bottom:auto;margin:60px auto 24px;max-width:440px;width:100%}
  .immersive-game{overflow:visible}.modal,.recipe-popover{max-height:calc(100svh - 20px)}
 }
+
+/* Keep the recipe label and icon on one aligned row. */
+.recipe-help .recipe-toggle{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;line-height:1.2;min-width:0;gap:8px}
+.recipe-help .recipe-toggle .recipe-toggle-label{display:block;white-space:nowrap;min-width:0;line-height:1.2}
+.recipe-help .recipe-toggle .recipe-toggle-icon{display:flex;align-items:center;justify-content:center;flex:0 0 16px;width:16px;height:16px;line-height:1;font-size:16px}
+@media(max-width:700px){
+ .recipe-help .recipe-toggle{padding:9px 7px;font-size:11px;gap:5px;min-height:44px;width:100%}
+ /* Preserve the paper texture, tape, handwriting and colors in a smaller ticket. */
+ .immersive-game .main-order.glass,.immersive-game .family-card{max-width:350px;width:100%;padding:14px;margin-top:clamp(72px,16svh,120px);margin-bottom:12px}
+ .immersive-game .main-order .row{gap:6px}.immersive-game .main-order .eyebrow{font-size:8px;letter-spacing:.7px}
+ .immersive-game .main-order .order-status{font-size:9px;padding:3px 6px}
+ .immersive-game .main-order .order-customer{font-size:18px;line-height:1.1;margin:9px 0 0}
+ .immersive-game .main-order .order-item{gap:10px;padding:6px 0 10px;align-items:center}
+ .immersive-game .main-order .order-item h2{font-size:27px;line-height:1.05;margin:0}
+ .immersive-game .main-order .order-item small{font-size:16px;line-height:1.15;margin-top:4px}
+ .main-order .order-item>.order-drink-visual,.order-drink-visual .photo-object{width:50px;height:50px;flex-basis:50px}
+ .immersive-game .main-order .order-time{font-size:10px;margin:7px 0 10px;line-height:1.3;gap:5px}
+ .immersive-game .main-order .order-time small{font-size:9px}
+ .immersive-game .main-order button.primary{min-height:44px;padding:10px 12px;font-size:12px}
+ .immersive-game .family-card h2{font-size:26px;line-height:1.1;margin:7px 0 4px}
+ .family-explain{font-size:14px;line-height:1.2;margin-bottom:8px}
+ .family-items{gap:4px}.immersive-game .family-items button{gap:8px;padding:6px 8px;min-height:44px}
+ .family-items b{font-size:15px;line-height:1.15}.family-items button>span:first-child{font-size:22px}
+ .immersive-game .family-items small{font-size:9px;margin-top:2px}
+ .family-card>p[data-time]{font-size:16px;margin:8px 0}
+}
