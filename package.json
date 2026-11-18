@@ -4,6 +4,6 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build-production.mjs",
-    "check": "node --check dist/audio.js && node --check dist/game.js && node --check dist/prep.js && npm run build && node --check build/game.js && node tests/customer-flow.cjs && node tests/audio.cjs"
+    "check": "node --check dist/audio.js && node --check dist/game.js && node --check dist/prep.js && npm run build && node --check build/game.js && node tests/customer-flow.cjs && node tests/audio.cjs && node tests/persistence.cjs"
   }
 }

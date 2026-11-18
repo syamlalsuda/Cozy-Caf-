@@ -21,7 +21,13 @@ const RECIPES=[
 const ICONS={Bread:'🍞',Lettuce:'🥬',Tomato:'🍅',Cheese:'🧀',Cup:'🥛',Espresso:'☕','Pour coffee':'🫖',Tea:'🍃','Hot water':'💧',Croissant:'🥐','Heat pastry':'♨','Plate':'🍽','Steam milk':'♨','Pour milk':'🥛',Chocolate:'🍫','Hot milk':'🥛',Marshmallow:'☁'};
 const UPGRADES=[{id:'machine',name:'Better equipment',desc:'Preparation actions take 50% less time.',cost:65,level:1},{id:'seating',name:'An extra table',desc:'Adds 15 seconds to every new customer’s patience.',cost:90,level:2},{id:'station',name:'Second preparation station',desc:'Adds 15 seconds to each customer’s patience.',cost:120,level:3},{id:'plants',name:'A little greenery',desc:'Adds café plants and 5 reputation points.',cost:40,level:1}];
 const fresh=()=>({version:1,levelNumber:1,visitsStarted:0,visitsFinished:0,seenPortraits:[],journeyComplete:false,music:true,name:'',cash:0,xp:0,rep:75,combo:0,served:0,tips:0,orders:[],upgrades:[],relaxed:false,sound:true,tutorial:0,nextArrival:4,customerSequence:0,history:[],seenIntro:false});
-let state;try{state=JSON.parse(localStorage.getItem('cozy-cafe-v1'))}catch{}if(!state||state.version!==1)state=fresh();
+function readSavedCafe(){
+ for(const key of ['cozy-cafe-v1','cozy-cafe-v1-backup']){
+  try{const saved=JSON.parse(localStorage.getItem(key));if(saved&&saved.version===1&&Array.isArray(saved.orders)&&Array.isArray(saved.upgrades))return saved;}catch{}
+ }
+ return fresh();
+}
+let state=readSavedCafe();
 // Keep all valid saved orders and their progress when the menu grows.
 state.orders=state.orders.filter(o=>RECIPES.some(r=>r.id===o.recipe));
 state.lastRecipe??=state.orders.at(-1)?.recipe||null;
@@ -39,11 +45,20 @@ state.music??=true;state.journeyComplete??=false;
 let reviewSave=null,reviewRecipe=null;
 let audioStarted=false;
 delete state.character;
-let screen='exterior',selected=null,focusId=null,modal=null,busy=false,entering=false,drag=null,pick=null,last=performance.now(),saveElapsed=0,toastTimer;
+const hasSavedCafe=!!(state.name&&state.seenIntro);
+let screen=hasSavedCafe?'game':'exterior',selected=state.orders.some(o=>o.id===state.view?.selected)?state.view.selected:null,focusId=state.view?.focusId||null,modal=hasSavedCafe?(state.journeyComplete?'complete':'resume'):null,busy=false,entering=false,drag=null,pick=null,last=performance.now(),saveElapsed=0,toastTimer;
 const app=document.querySelector('#app');
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const recipe=o=>RECIPES.find(r=>r.id===o.recipe);const level=()=>state.levelNumber;const capacity=()=>Math.min(3,1+Math.floor((level()-1)/2))+(state.upgrades.includes('station')?1:0);
-function save(){if(reviewSave)return;try{localStorage.setItem('cozy-cafe-v1',JSON.stringify(state))}catch{toast('Storage unavailable — progress lasts for this session.')}}
+function save(){
+ if(reviewSave)return;
+ state.view={screen,selected,focusId};state.savedAt=Date.now();
+ try{
+  const snapshot=JSON.stringify(state);localStorage.setItem('cozy-cafe-v1',snapshot);
+  try{localStorage.setItem('cozy-cafe-v1-backup',snapshot);}catch{}
+ }catch{toast('Your browser is blocking saves. Allow site storage to keep progress after closing.');}
+}
+
 function toast(t){const el=document.querySelector('#toast');el.textContent=t;el.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.style.display='none',4200)}
 function audioSync(){CafeAudio.sync({active:!modal&&!document.hidden,music:state.music,effects:state.sound});}
 function sound(freq=500){CafeAudio.effect(freq===180?'wrong':freq===900?'serve':freq===700?'arrive':'tap');}
@@ -59,7 +74,7 @@ function finishVisit(){
 function person(name=''){return `<div class="person"><div class="head"></div><div class="body"></div><label>${esc(name)}</label></div>`}
 function musicButton(){return `<button data-action="music-toggle" aria-label="${audioStarted&&state.music?'Turn music off':'Turn music on'}" aria-pressed="${audioStarted&&state.music}">${audioStarted&&state.music?'♫ Music on':'♫ Play music'}</button>`;}
 function render(){
-audioSync();
+audioSync();save();
 if(screen==='exterior'){app.innerHTML=`<main class="exterior-opening ${entering?'is-entering':''}">${exterior()}<div class="outside-top"><a class="outside-brand" aria-label="Cozy Café">Cozy Café<span>LITTLE MOMENTS</span></a>${musicButton()}<span class="outside-level">LEVEL ${level()} · ${level()===1?'Humble tea stall':level()===2?'Neighborhood café':level()===3?'Lakeside restaurant':'Grand luxury hotel'}</span></div><section class="outside-welcome"><span class="eyebrow">YOUR LITTLE CORNER OF THE WORLD</span><h1>${state.name?`Good morning, ${esc(state.name)}.`:'Your café story starts here.'}</h1><p>${level()===1?'A borrowed corner, a kettle, and a dream. Every cup helps you grow.':'You built this, one cup at a time. Welcome to your growing café.'}</p><label class="welcome-name-label" for="owner">What should your customers call you?</label><input class="welcome-name" id="owner" type="text" maxlength="24" autocomplete="given-name" placeholder="Enter your name" value="${esc(state.name)}" ${entering?'disabled':''}><button class="primary" data-action="enter" ${entering?'disabled':''}>${entering?level()===1?'Opening the stall…':'Opening the door…':level()===1?'Open the tea stall →':'Open the café →'}</button><small>${level()===1?'Three unique customers per level · Random orders':'Progress saved automatically on this device'}</small>${state.seenIntro&&!reviewSave?'<button class="welcome-reset" data-action="reset">Start a new game</button>':''}</section><button class="review-launch" data-action="levels">${reviewSave?'Review session · ':''}Level selection · temporary</button>${modal?modalHTML():''}</main>`;return}
 const o=state.orders.find(o=>o.id===selected),r=o&&recipe(o);
 if(o){busy=!!o.action;app.innerHTML=preparation(o);return}
@@ -76,6 +91,7 @@ function timeText(o){return o.remaining>0?`${Math.ceil(o.remaining)}s remaining`
 function orderTicket(o){const r=recipe(o);return `<button class="ticket ${o.id===selected?'active':''}" data-action="select" data-id="${o.id}"><div class="row"><b>${esc(o.name)}</b><small data-status="${o.id}">${o.remaining<=0?'Late':o.step===r.steps.length?'Ready to serve':o.step?'Preparing':'Waiting'}</small></div><strong>${r.icon} ${r.name}</strong><div class="row"><span>$${r.price} + up to $${r.tip} tip</span></div><div class="clock" data-bar="${o.id}"><i style="width:${Math.max(0,o.remaining/o.duration*100)}%"></i></div><div class="row" style="margin-top:8px"><span data-time="${o.id}">${timeText(o)}</span><small>${o.step}/${r.steps.length}</small></div></button>`}
 function exterior(){if(level()===1)return `<div class="cafe-art humble"><img src="assets/stall-empty.webp" alt="A tiny clean cream-and-blue tea stall with a polished kettle, neat cups, a wooden stool and a bicycle beside the lake" fetchpriority="high">${state.upgrades.includes('plants')?'<div class="garden-extra" aria-label="Purchased greenery">🪴</div>':''}</div>`;return `<div class="cafe-art ${level()>=10?'expanded':level()>=5?'growing':''}"><img src="assets/${level()>=4?'level4-exterior':level()>=3?'level3-exterior':'level2-scooter-empty'}.webp" alt="${level()>=4?'An ultra luxury hotel with luxury cars and a rooftop helipad with helicopter':level()>=3?'A larger lakeside restaurant with a terrace and an unbranded premium navy car':'Lakeside café with an unbranded sage scooter'}" fetchpriority="high">${state.upgrades.includes('plants')?'<div class="garden-extra" aria-label="Purchased greenery">🪴 🌿 🪴</div>':''}${level()>=10?'<div class="expansion-sign">GARDEN TERRACE<br><small>Now open · Level 10</small></div>':''}</div>`}
 function modalHTML(){let body='';if(modal==='pause')body=`<h2>A little breather.</h2><p class="muted">The café is paused. Take your time.</p><div class="panel">${esc(state.name)} · Café owner<br><small>Level ${level()} · ${state.served} served · $${state.tips} tips earned</small></div><label class="setting">Relaxed mode <input type="checkbox" data-setting="relaxed" ${state.relaxed?'checked':''}></label><small>Freezes deadlines; customer arrivals continue.</small><label class="setting">Background music <input type="checkbox" data-setting="music" ${state.music?'checked':''}></label><label class="setting">Sound effects <input type="checkbox" data-setting="sound" ${state.sound?'checked':''}></label><button data-action="test-audio">Test sound</button><button class="primary wide" data-action="close">Back to my café</button><button style="margin-top:12px" data-action="reset">Start a new game</button>`;
+if(modal==='resume')body=`<h2>Welcome back, ${esc(state.name)}.</h2><p>Your café progress is saved on this browser.</p><div class="panel">Level ${level()} · ${state.visitsFinished}/3 visits<br>$${state.cash} · ${state.served} dishes served${selected?'<br>Your preparation is ready to continue.':''}</div><p>Orders and timers stayed paused while you were away.</p><button class="primary wide" data-action="close">Resume my café →</button>`;
 if(modal==='complete')body=`<h2>Your café dream came true.</h2><p>All four levels completed — three unique customer visits in each chapter.</p><p>${state.served} dishes served · $${state.cash} earned · ${state.xp} XP</p><button class="primary wide" data-action="reset">Play a new café story</button>`;
 if(modal==='levels')body=levelReviewPanel();
 if(modal==='reset')body=`<h2>Start fresh?</h2><p>This clears the café’s progress saved in this browser.</p><button data-action="close">Keep my café</button> <button data-action="confirm-reset">Reset progress</button>`;
@@ -130,4 +146,4 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='owner
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&screen==='game'){modal='pause';save();render()}});
 setInterval(()=>{const now=performance.now(),dt=Math.min((now-last)/1000,1);last=now;audioSync();if(screen!=='game'||modal||document.hidden)return;let changed=false;for(const o of state.orders){if(startAutomaticStep(o))changed=true;if(o.action){o.actionLeft-=dt;if(o.actionLeft<=0){o.step++;delete o.action;busy=false;startAutomaticStep(o);changed=true;}else if(o.id===selected){const bar=document.querySelector('#action-progress');if(bar)bar.style.width=100*(1-o.actionLeft/o.actionTotal)+'%';const countdown=document.querySelector('#auto-countdown');if(countdown)countdown.textContent=Math.max(1,Math.ceil(o.actionLeft))+'s'}}if(!state.relaxed)o.remaining-=dt;if(o.remaining<=-20){state.history.unshift({name:o.name,status:'Missed',base:0,tip:0,xp:0});if(!o.group||state.orders.find(x=>x.group===o.group)===o)state.rep=Math.max(0,state.rep-4);state.combo=0;toast(`${o.name} had to leave. No payment earned — a fresh start awaits.`);if(selected===o.id)selected=null;changed=true}}
 const expired=state.orders.filter(o=>o.remaining<=-20);const departed=new Set(expired.map(o=>o.group||o.id));state.orders=state.orders.filter(o=>o.remaining>-20);for(const visit of departed)finishVisit();state.nextArrival-=dt;if(!modal&&!state.journeyComplete&&state.visitsStarted<3&&state.nextArrival<=0&&!state.orders.length){state.nextArrival=Math.max(10,22-level());addOrder(state.tutorial===0);changed=true}if(changed)render();else for(const o of state.orders){const t=document.querySelector(`[data-time="${o.id}"]`);if(t)t.textContent=timeText(o);const b=document.querySelector(`[data-bar="${o.id}"]`);if(b){b.classList.toggle('late',o.remaining<=0);b.firstElementChild.style.width=Math.max(0,o.remaining/o.duration*100)+'%'}const s=document.querySelector(`[data-status="${o.id}"]`);if(s)s.textContent=o.remaining<=0?'Late':o.step===recipe(o).steps.length?'Ready to serve':o.step?'Preparing':'Waiting';if(selected===o.id&&document.querySelector('#prep-clock')){const timer=document.querySelector('#prep-clock');timer.textContent=timeText(o);timer.classList.toggle('urgent',!state.relaxed&&o.remaining<=15)}}saveElapsed+=dt;if(saveElapsed>=2){saveElapsed=0;save()}},100);
-window.addEventListener('beforeunload',save);render();
+window.addEventListener('beforeunload',save);window.addEventListener('pagehide',save);render();
